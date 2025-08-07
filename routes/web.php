@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\UserMembershipController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,5 +19,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::resource('memberships', MembershipController::class);
+Route::resource('user-memberships', UserMembershipController::class);
+Route::resource('transactions', TransactionController::class);
 
 require __DIR__.'/auth.php';
