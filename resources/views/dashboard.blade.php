@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="flex min-h-screen bg-gray-100 dark:bg-gray-900">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white dark:bg-gray-800 shadow-md">
+        <!-- <aside class="w-64 bg-white dark:bg-gray-800 shadow-md">
             <div class="p-6">
                 <img src="/images/mplogo.png" alt="Logo" class="w-24 mx-auto mb-4">
                 <h3 class="text-lg font-bold text-center text-gray-800 dark:text-gray-200 mb-6">UBCFitnessid</h3>
@@ -25,6 +25,7 @@
                         <li class="mb-2">
                             <a href="#" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Settings</a>
                         </li>
+                        
                         <li class="mt-8">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -34,7 +35,7 @@
                     </ul>
                 </nav>
             </div>
-        </aside>
+        </aside> -->
 
         <!-- Main Content -->
         <main class="flex-1 p-8">
