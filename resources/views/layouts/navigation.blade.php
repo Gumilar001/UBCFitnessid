@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <img src="images/logo.jpg" class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <img src="{{ asset('images/logo.jpg') }}" class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
 
@@ -21,19 +21,15 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <!-- Notification, Clock, and User Icons -->
-                <div class="flex items-center space-x-4 mr-4">
-                    <!-- Notification Bell Icon -->
-                    <button class="focus:outline-none hover:text-blue-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                    </button>
+                <div class="flex items-center space-x-4 mr-4">                    
                     <!-- Clock Icon -->
-                    <button class="focus:outline-none hover:text-blue-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </button>
+                    <a href="{{ route('dashboard') }}">
+                        <img src="{{ asset('images/notif.png') }}" class="block h-4 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                    </a>
+                    <!-- Cart Icon -->
+                    <a href="{{ route('dashboard') }}">
+                        <img src="{{ asset('images/cart.png') }}" class="block h-4 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                    </a>
                 </div>
                 <!-- User Dropdown -->
                 <x-dropdown align="right" width="48">
@@ -85,6 +81,20 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+             <!-- Membership Link -->
+            <x-responsive-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.index')">
+                {{ __('Membership') }}
+            </x-responsive-nav-link>
+
+            <!-- Transaction Link -->
+            <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
+                {{ __('Transaction') }}
+            </x-responsive-nav-link>
+
+            <!-- User Membership Link -->
+            <x-responsive-nav-link :href="route('user-memberships.index')" :active="request()->routeIs('user-memberships.index')">
+                {{ __('User Membership') }}
             </x-responsive-nav-link>
         </div>
 

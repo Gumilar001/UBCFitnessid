@@ -28,6 +28,7 @@ class TransactionController extends Controller
             'user_id' => 'required|exists:users,id',
             'membership_id' => 'required|exists:memberships,id',
             'amount' => 'required|numeric',
+            'jenis_pembayaran' => 'nullable|string|max:255',
             'paid_at' => 'required|date',
         ]);
         Transaction::create($request->all());
@@ -47,6 +48,7 @@ class TransactionController extends Controller
             'user_id' => 'required|exists:users,id',
             'membership_id' => 'required|exists:memberships,id',
             'amount' => 'required|numeric',
+            'jenis_pembayaran' => 'nullable|string|max:255',
             'paid_at' => 'required|date',
         ]);
         $transaction->update($request->all());
@@ -57,5 +59,10 @@ class TransactionController extends Controller
     {
         $transaction->delete();
         return redirect()->route('transactions.index')->with('success', 'Transaction deleted!');
+    }
+    public function myTransactions()
+    {
+        $transactions = Transaction::where('user_id', auth()->id())->get();
+        return view('users.transactions.index', compact('transactions'));
     }
 }

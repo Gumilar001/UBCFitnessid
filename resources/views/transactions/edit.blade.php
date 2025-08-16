@@ -24,6 +24,16 @@
                 <label class="block">Amount</label>
                 <input type="number" name="amount" value="{{ $transaction->amount }}" class="w-full border rounded px-3 py-2" required>
             </div>
+
+            <div>
+                <label class="block">Payment Method</label>
+                <select name="jenis_pembayaran" class="w-full border rounded px-3 py-2" required>
+                    <option value="cash" @if($transaction->jenis_pembayaran == 'cash') selected @endif>Cash</option>
+                    <option value="transfer" @if($transaction->jenis_pembayaran == 'transfer') selected @endif>Transfer</option>
+                    <option value="credit_card" @if($transaction->jenis_pembayaran == 'credit_card') selected @endif>Credit Card</option>
+                </select>
+            </div>
+
             <div>
                 <label class="block">Paid At</label>
                 <input type="date" name="paid_at" value="{{ $transaction->paid_at }}" class="w-full border rounded px-3 py-2" required>

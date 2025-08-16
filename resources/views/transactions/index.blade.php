@@ -2,7 +2,7 @@
     <div class="container mx-auto p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">Transaction List</h2>
-            <a href="{{ route('transactions.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded">Add Transaction</a>
+            <a href="{{ route('transactions.create') }}" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">Add Transaction</a>
         </div>
         @if(session('success'))
             <div class="mb-4 text-green-600">{{ session('success') }}</div>
@@ -13,6 +13,7 @@
                     <th class="py-2 px-4">Member</th>
                     <th class="py-2 px-4">Membership</th>
                     <th class="py-2 px-4">Amount</th>
+                    <th class="py-2 px-4">Payment Method</th>
                     <th class="py-2 px-4">Paid At</th>
                     <th class="py-2 px-4">Action</th>
                 </tr>
@@ -23,6 +24,7 @@
                     <td class="py-2 px-4">{{ $transaction->user->name }}</td>
                     <td class="py-2 px-4">{{ $transaction->membership->name }}</td>
                     <td class="py-2 px-4">Rp{{ number_format($transaction->amount,0,',','.') }}</td>
+                    <td class="py-2 px-4">{{ ucfirst($transaction->jenis_pembayaran) }}</td>
                     <td class="py-2 px-4">{{ $transaction->paid_at }}</td>
                     <td class="py-2 px-4 flex gap-2">
                         <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-600">Edit</a>

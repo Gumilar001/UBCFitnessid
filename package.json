@@ -41,6 +41,7 @@
         "camelcase-css": "^2.0.1",
         "caniuse-lite": "^1.0.30001731",
         "chalk": "^4.1.2",
+        "chart.js": "^4.5.0",
         "chokidar": "^3.6.0",
         "chownr": "^3.0.0",
         "cliui": "^8.0.1",

@@ -5,14 +5,21 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\UserMembershipController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\IsStaff;
+use App\Http\Middleware\IsUser;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard',[DashboardController::class, 'index'] )
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -20,8 +27,55 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::resource('memberships', MembershipController::class);
-Route::resource('user-memberships', UserMembershipController::class);
-Route::resource('transactions', TransactionController::class);
+/**
+ * ========================
+ * ADMIN ROUTES
+ * ========================
+ */
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Kelola User
+    Route::resource('users', UserController::class);
+
+    // Admin juga bisa kelola Membership
+    Route::resource('memberships', MembershipController::class);
+
+    // Kelola Produk
+    Route::resource('products', App\Http\Controllers\ProductController::class);
+});
+
+/**
+ * ========================
+ * ADMIN & STAFF ROUTES
+ * ========================
+ * (Bisa kelola transactions & user-memberships)
+ */
+Route::middleware(['auth', 'role:admin,staff'])->group(function () {
+    Route::resource('transactions', TransactionController::class);
+    Route::resource('user-memberships', UserMembershipController::class);
+});
+
+/**
+ * ========================
+ * STAFF ROUTES
+ * ========================
+ * (Staff hanya bisa lihat membership)
+ */
+Route::middleware(['auth', 'role:staff'])->group(function () {
+    Route::get('/staff/memberships', [MembershipController::class, 'index'])->name('staff.memberships.index');
+    Route::get('/staff/users', [UserController::class, 'index'])->name('staff.users.index');
+    Route::get('/staff/transactions', [TransactionController::class, 'index'])->name('staff.transactions.index');
+    Route::get('/staff/user-memberships', [UserMembershipController::class, 'index'])->name('staff.user-memberships.index');
+});
+
+/**
+ * ========================
+ * USER ROUTES
+ * ========================
+ */
+Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::get('/my-memberships', [UserMembershipController::class, 'myMemberships'])->name('user.my-memberships');
+    Route::get('/my-transactions', [TransactionController::class, 'myTransactions'])->name('user.my-transactions');
+});
+
 
 require __DIR__.'/auth.php';

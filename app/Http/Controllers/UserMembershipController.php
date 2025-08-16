@@ -60,4 +60,11 @@ class UserMembershipController extends Controller
         $userMembership->delete();
         return redirect()->route('user-memberships.index')->with('success', 'User Membership deleted!');
     }
+
+    public function myMemberships()
+    {
+        $memberships = UserMembership::where('user_id', auth()->id())->get();
+        return view('users.memberships.index', compact('memberships'));
+    }
+
 }

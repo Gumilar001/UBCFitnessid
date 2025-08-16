@@ -12,7 +12,7 @@
         <div class="w-2/3 flex flex-col justify-between bg-gray-900 px-12 py-10 relative">
             <!-- Navbar -->
             <div class="flex items-center gap-8">
-                <div class="bg-orange-500 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center text-xl">U</div>
+                <div class="bg-blue-500 text-white font-bold rounded-full w-10 h-10 flex items-center justify-center text-xl">U</div>
                 <nav class="flex gap-6 text-gray-300 text-sm">
                     <a href="{{ route('login') }}" class="hover:text-white">Login</a>
                     <a href="{{ route('register') }}" class="hover:text-white">Register</a>
@@ -20,7 +20,7 @@
             </div>
             <!-- Main Text -->
             <div class="flex-1 flex flex-col justify-center mt-24">
-                <span class="block w-8 h-1 bg-orange-500 mb-6"></span>
+                <span class="block w-8 h-1 bg-blue-500 mb-6"></span>
                 <h1 class="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
                     Mulai perjalanan <br>
                     kebugaranmu bersama kami!<br>
@@ -40,7 +40,7 @@
             </div>
         </div>
         <!-- Right Section (30%) -->
-        <div class="w-1/3 relative flex items-center justify-center bg-gradient-to-br from-orange-900 to-yellow-700 overflow-hidden">
+        <div class="w-1/3 relative flex items-center justify-center bg-gradient-to-br from-blue-900 to-blue-400 overflow-hidden">
             <!-- Background overlay pattern (optional) -->
             <div class="absolute inset-0 opacity-60" style="background-image: url('/images/bg-pattern.jpg'); background-size: cover; background-position: center;"></div>
             <!-- Main Image -->
@@ -54,7 +54,7 @@
             <!-- Scroll Down (right, vertical) -->  
         </div>
         <div class="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/6 z-20">
-            <img src="/images/background3.jpg" alt="Gym" class="w-[600px] rounded-xl shadow-2xl object-cover">
+            <img src="/images/background-biru-3.jpg" alt="Gym" class="w-[600px] rounded-xl shadow-2xl object-cover">
         </div>
     </div>
 </body>

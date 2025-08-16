@@ -14,23 +14,35 @@
             </div>
             <div>
                 <label class="block">Membership</label>
-                <select name="membership_id" class="w-full border rounded px-3 py-2" required>
+                <select name="membership_id" id="membershipSelect" class="w-full border rounded px-3 py-2" required>
                     <option value="">-- Select Membership --</option>
                     @foreach($memberships as $membership)
-                        <option value="{{ $membership->id }}">{{ $membership->name }}</option>
+                        <option value="{{ $membership->id }}" data-price="{{ $membership->price }}">
+                            {{ $membership->name }}
+                        </option>
                     @endforeach
                 </select>
             </div>
+
             <div>
                 <label class="block">Amount</label>
-                <input type="number" name="amount" class="w-full border rounded px-3 py-2" required>
+                <input type="number" name="amount" id="amountInput" class="w-full border rounded px-3 py-2" required>
             </div>
+
+            <div>
+                <label class="block">Payment Method</label>
+                <select name="jenis_pembayaran" class="w-full border rounded px-3 py-2" required>
+                    <option value="cash">Cash</option>
+                    <option value="transfer">Transfer</option>
+                    <option value="credit_card">Credit Card</option>
+                </select>
+            </div>
+
             <div>
                 <label class="block">Paid At</label>
                 <input type="date" name="paid_at" class="w-full border rounded px-3 py-2" required>
             </div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
-            <a href="{{ route('transactions.index') }}" class="ml-2 text-gray-600">Cancel</a>
-        </form>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">Save</button>
+            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"><a href="{{ route('transactions.index') }}">Cancel</a></button>
     </div>
 </x-app-layout>
