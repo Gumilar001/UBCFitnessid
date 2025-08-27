@@ -133,6 +133,7 @@
         "postcss-selector-parser": "^6.1.2",
         "postcss-value-parser": "^4.2.0",
         "proxy-from-env": "^1.1.0",
+        "puppeteer": "^24.17.0",
         "queue-microtask": "^1.2.3",
         "read-cache": "^1.0.0",
         "readdirp": "^3.6.0",
@@ -177,5 +178,13 @@
     },
     "keywords": [],
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Gumilar001/UBCFitnessid.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Gumilar001/UBCFitnessid/issues"
+    },
+    "homepage": "https://github.com/Gumilar001/UBCFitnessid#readme"
 }

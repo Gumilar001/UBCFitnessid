@@ -26,7 +26,7 @@
 
             <div>
                 <label class="block">Amount</label>
-                <input type="number" name="amount" id="amountInput" class="w-full border rounded px-3 py-2" required>
+                <input type="number" name="amount" id="amountInput" class="w-full border rounded px-3 py-2" required readonly>
             </div>
 
             <div>

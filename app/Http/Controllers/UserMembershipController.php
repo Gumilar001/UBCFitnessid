@@ -6,6 +6,8 @@ use App\Models\UserMembership;
 use App\Models\User;
 use App\Models\Membership;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\Browsershot\Browsershot;
 
 class UserMembershipController extends Controller
 {
@@ -31,6 +33,7 @@ class UserMembershipController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|in:active,expired,cancelled',
         ]);
+        
         UserMembership::create($request->all());
         return redirect()->route('user-memberships.index')->with('success', 'User Membership created!');
     }
@@ -67,4 +70,13 @@ class UserMembershipController extends Controller
         return view('users.memberships.index', compact('memberships'));
     }
 
+    public function print($id)
+    {
+        $membership = UserMembership::with(['user', 'membership'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('user_memberships.print', compact('membership'))
+                ->setPaper([0, 0, 340, 200]); // ukuran dalam point (1pt = 1/72 inch)
+
+        return $pdf->stream('kartu-member-'.$id.'.pdf');
+    }
 }

@@ -28,11 +28,15 @@
                     <td class="py-2 px-4">{{ ucfirst($um->status) }}</td>
                     <td class="py-2 px-4 flex gap-2">
                         <a href="{{ route('user-memberships.edit', $um) }}" class="text-blue-600">Edit</a>
+                        <a href="{{ route('user-memberships.print', $um->id) }}" target="_blank" class="text-green-600">
+                            Cetak
+                        </a>
                         <form action="{{ route('user-memberships.destroy', $um) }}" method="POST" onsubmit="return confirm('Delete this user membership?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600">Delete</button>
                         </form>
+                        
                     </td>
                 </tr>
                 @endforeach

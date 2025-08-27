@@ -21,6 +21,11 @@ Route::get('/dashboard',[DashboardController::class, 'index'] )
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('/user_dashboard', function () {
+    return view('user_dashboard');
+})->middleware(['auth', 'verified'])->name('user_dashboard');
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -52,6 +57,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     Route::resource('transactions', TransactionController::class);
     Route::resource('user-memberships', UserMembershipController::class);
+    Route::get('user-memberships/{id}/print', [UserMembershipController::class, 'print'])->name('user-memberships.print');
 });
 
 /**

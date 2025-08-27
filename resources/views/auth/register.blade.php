@@ -16,6 +16,24 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
+        <!-- No Handphone -->
+        <div class="mt-4">
+            <x-input-label for="no_hp" :value="__('No Handphone')" />
+            <x-text-input id="no_hp" class="block mt-1 w-full" type="text" name="no_hp" :value="old('no_hp')" required autocomplete="no_hp" />
+            <x-input-error :messages="$errors->get('no_hp')" class="mt-2" />
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="mt-4">
+            <x-input-label for="no_emergency" :value="__('Emergency Contact')" />
+            <x-text-input id="no_emergency" class="block mt-1 w-full" type="text" name="no_emergency" :value="old('no_emergency')" required autocomplete="no_emergency" />
+            <x-input-error :messages="$errors->get('no_emergency')" class="mt-2" />
+        </div>
+
+        <!-- Role (hidden, default user) -->
+        <input type="hidden" id="role" name="role" value="user">
+
+
         <!-- Password -->
         <div class="mt-4">
             <x-input-label for="password" :value="__('Password')" />
