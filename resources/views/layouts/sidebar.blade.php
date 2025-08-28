@@ -13,15 +13,14 @@
         </button>
     </div>
     <ul>
-        {{-- Menu umum (semua role) --}}
-        <li class="mb-2">
-            <a href="{{ route('dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
-                Dashboard
-            </a>
-        </li>
 
         {{-- Menu khusus ADMIN --}}
         @if($role === 'admin')
+            <li class="mb-2">
+                <a href="{{ route('dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    Dashboard
+                </a>
+            </li>
             <li class="mb-2">
                 <a href="{{ route('users.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     Users
@@ -51,6 +50,9 @@
                     <li class="mb-2">
                         <a href="{{ route('user-memberships.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">User Membership</a>
                     </li>
+                    <li class="mb-2">
+                        <a href="{{ route('trainer.dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Trainers</a>
+                    </li>
                 </ul>
             </li>
             <li class="mb-2">
@@ -62,6 +64,11 @@
         {{-- Menu khusus STAFF --}}
         @if($role === 'staff')
             <li class="mb-2">
+                <a href="{{ route('dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    Dashboard
+                </a>
+            </li>
+            <li class="mb-2">
                 <a href="{{ route('staff.users.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     Users
                 </a>
@@ -72,14 +79,37 @@
                 </a>
             </li>
             <li class="mb-2">
-                <a href="{{ route('staff.user-memberships.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
-                    User Memberships
-                </a>
+                <button
+                    onclick="toggleSubmenu('management-submenu')"
+                    class="w-full flex justify-between items-center py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    Management
+                    <svg class="w-4 h-4 transition-transform" id="management-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <ul id="management-submenu" class="hidden pl-4 mt-2">
+                    <li class="mb-2">
+                        <a href="{{ route('user-memberships.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">User Membership</a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="{{ route('trainer.dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Trainers</a>
+                    </li>
+                </ul>
             </li>
+            <li class="mb-2">
+                <a href="{{ route('products.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    Products
+                </a>
         @endif
 
         {{-- Menu khusus USER --}}
         @if($role === 'user')
+            <li class="mb-2">
+                <a href="{{ route('user_dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    Dashboard
+                </a>
+            </li>
             <li class="mb-2">
                 <a href="{{ route('user.my-memberships') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     My Memberships
@@ -89,6 +119,19 @@
                 <a href="{{ route('user.my-transactions') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     My Transactions
                 </a>
+            </li>
+            <li class="mb-2">
+                <a href="{{ route('trainer.dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Trainers</a>
+            </li>
+        @endif
+
+        @if($role === 'personal trainer')
+            <li class="mb-2">
+                <a href="{{ route('pt_dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    Dashboard
+                </a>
+            <li class="mb-2">
+                <a href="{{ route('trainer.dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Trainers</a>
             </li>
         @endif
 

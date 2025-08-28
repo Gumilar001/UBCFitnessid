@@ -19,7 +19,10 @@ class UserMembershipController extends Controller
 
     public function create()
     {
-        $users = User::all();
+        $users = User::whereHas('transactions') // hanya user dengan transaksi
+                 ->whereDoesntHave('userMemberships') // exclude yang sudah punya membership
+                 ->get();
+                 
         $memberships = Membership::all();
         return view('user_memberships.create', compact('users', 'memberships'));
     }

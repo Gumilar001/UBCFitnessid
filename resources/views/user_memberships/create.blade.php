@@ -5,29 +5,31 @@
             @csrf
             <div>
                 <label class="block">User</label>
-                <select name="user_id" class="w-full border rounded px-3 py-2" required>
+                <select name="user_id" class="w-full border rounded px-3 py-2" onchange="setMembership(this)" required>
                     <option value="">-- Select User --</option>
                     @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                        <option value="{{ $user->id }}"
+                            data-membership="{{ $user->latestTransaction?->membership?->name ?? 'Belum Ada' }}"
+                            data-membership-id="{{ $user->latestTransaction?->membership?->id ?? '' }}"
+                            data-duration="{{ $user->latestTransaction?->membership?->duration ?? 0 }}">
+                            {{ $user->name }}
+                        </option>
                     @endforeach
                 </select>
+
             </div>
             <div>
                 <label class="block">Membership</label>
-                <select name="membership_id" class="w-full border rounded px-3 py-2" required>
-                    <option value="">-- Select Membership --</option>
-                    @foreach($memberships as $membership)
-                        <option value="{{ $membership->id }}">{{ $membership->name }}</option>
-                    @endforeach
-                </select>
+                <input type="hidden" id="membership_id" name="membership_id">
+                <input type="text" id="membership" name="membership" class="w-full border rounded px-3 py-2" readonly>
             </div>
             <div>
                 <label class="block">Start Date</label>
-                <input type="date" name="start_date" class="w-full border rounded px-3 py-2" required>
+                <input type="date" id="start_date" name="start_date" class="w-full border rounded px-3 py-2" readonly>
             </div>
             <div>
                 <label class="block">End Date</label>
-                <input type="date" name="end_date" class="w-full border rounded px-3 py-2" required>
+                <input type="date" id="end_date" name="end_date" class="w-full border rounded px-3 py-2" readonly>
             </div>
             <div>
                 <label class="block">Status</label>
@@ -41,4 +43,31 @@
             <a href="{{ route('user-memberships.index') }}" class="ml-2 text-gray-600">Cancel</a>
         </form>
     </div>
+
+    <script>
+    function setMembership(select) {
+        let membership = select.options[select.selectedIndex].getAttribute('data-membership');
+        let membershipId = select.options[select.selectedIndex].getAttribute('data-membership-id');
+        let duration = parseInt(select.options[select.selectedIndex].getAttribute('data-duration')) || 0;
+
+        document.getElementById('membership').value = membership;
+        document.getElementById('membership_id').value = membershipId;
+
+        if (duration > 0) {
+            let today = new Date();
+
+            // Start Date = hari ini
+            let startDate = today.toISOString().split('T')[0];
+            document.getElementById('start_date').value = startDate;
+
+            // End Date = hari ini + duration (misal 30 hari)
+            let endDate = new Date();
+            endDate.setDate(today.getDate() + duration);
+            document.getElementById('end_date').value = endDate.toISOString().split('T')[0];
+        } else {
+            document.getElementById('start_date').value = '';
+            document.getElementById('end_date').value = '';
+        }
+    }
+    </script>
 </x-app-layout>

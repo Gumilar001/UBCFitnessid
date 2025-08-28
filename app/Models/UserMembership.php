@@ -2,7 +2,7 @@
 
 namespace App\Models;
 use Illuminate\Support\Str;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class UserMembership extends Model

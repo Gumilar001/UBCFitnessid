@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\UserMembership;
+use App\Models\Transaction;
+use App\Models\TrainerBooking;
 
 class User extends Authenticatable
 {
@@ -53,4 +56,25 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserMembership::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'user_id');
+    }
+
+    public function latestTransaction()
+    {
+        return $this->hasOne(Transaction::class)->latestOfMany();
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(TrainerBooking::class);
+    }
+
+    public function userMemberships()
+    {
+        return $this->hasOne(UserMembership::class, 'user_id');
+    }
+
 }

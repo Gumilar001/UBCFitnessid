@@ -17,7 +17,7 @@ class TransactionController extends Controller
 
     public function create()
     {
-        $users = User::all();
+        $users = User::where('role', 'user')->get();
         $memberships = Membership::all();
         return view('transactions.create', compact('users', 'memberships'));
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\UserMembershipController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TrainerBookingController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Middleware\IsAdmin;
@@ -25,6 +26,14 @@ Route::get('/user_dashboard', function () {
     return view('user_dashboard');
 })->middleware(['auth', 'verified'])->name('user_dashboard');
 
+Route::get('/pt_dashboard', function () {
+    return view('pt_dashboard');
+})->middleware(['auth', 'verified'])->name('pt_dashboard');
+
+Route::get('/trainer-dashboard', [TrainerBookingController::class, 'trainerDashboard'])
+    ->name('trainer.dashboard')
+    ->middleware('auth');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -38,14 +47,16 @@ Route::middleware('auth')->group(function () {
  * ========================
  */
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    // Kelola User
-    Route::resource('users', UserController::class);
+    
 
     // Admin juga bisa kelola Membership
     Route::resource('memberships', MembershipController::class);
 
     // Kelola Produk
     Route::resource('products', App\Http\Controllers\ProductController::class);
+
+    Route::get('/booking/create', [TrainerBookingController::class, 'create'])->name('booking.create')->middleware('auth');
+    Route::post('/booking/store', [TrainerBookingController::class, 'store'])->name('booking.store')->middleware('auth');
 });
 
 /**
@@ -55,9 +66,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
  * (Bisa kelola transactions & user-memberships)
  */
 Route::middleware(['auth', 'role:admin,staff'])->group(function () {
+    // Kelola User
+    Route::resource('users', UserController::class);
     Route::resource('transactions', TransactionController::class);
     Route::resource('user-memberships', UserMembershipController::class);
-    Route::get('user-memberships/{id}/print', [UserMembershipController::class, 'print'])->name('user-memberships.print');
+    Route::get('user-memberships/{id}/print', [UserMembershipController::class, 'print'])->name('user-memberships.print');    
 });
 
 /**

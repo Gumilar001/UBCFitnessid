@@ -79,6 +79,7 @@
             color: #f0f0f0;
             text-align: center;
             padding: 0 20px;
+            margin-top: 40px;
         }
 
         .footer {

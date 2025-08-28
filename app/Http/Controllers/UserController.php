@@ -31,7 +31,7 @@ class UserController extends Controller
     }
 
     $users = $query->latest()->paginate(10)->withQueryString();
-    $roles = ['admin', 'staff', 'user'];
+    $roles = ['admin', 'staff', 'personal trainer' ,'user'];
 
     return view('users.index', compact('users', 'roles'));
     }
@@ -50,7 +50,7 @@ class UserController extends Controller
 
     public function create()
     {        
-        $roles = ['admin', 'staff', 'user'];
+        $roles = ['admin', 'staff', 'personal trainer', 'user'];
         return view('users.create', compact('roles'));
     }
 
@@ -62,7 +62,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'no_hp'         => 'nullable|string|max:20',
             'no_emergency'  => 'nullable|string|max:20',
-            'role'     => 'required|string|in:admin,staff,user',
+            'role'     => 'required|string|in:admin,staff,personal trainer,user',
         ]);
 
         User::create([
@@ -85,7 +85,7 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'no_hp'         => 'nullable|string|max:20',
             'no_emergency'  => 'nullable|string|max:20',
-            'role'     => 'required|string|in:admin,staff,user', 
+            'role'     => 'required|string|in:admin,staff, personal trainer,user', 
         ]);
 
         $user->name  = $request->name;

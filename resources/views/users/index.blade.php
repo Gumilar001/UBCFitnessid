@@ -6,7 +6,7 @@
     <div class="max-w-6xl mx-auto mt-6">
         <div class="flex items-center justify-between mb-4">
             @auth
-                @if(Auth::user()->role === 'admin')
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staff')
                     <a href="{{ route('users.create') }}" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">Tambah User</a>
                 @endif
             @endauth

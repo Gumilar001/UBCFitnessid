@@ -45,6 +45,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('dashboard');
         } elseif ($user->role === 'user') {
             return redirect()->route('user_dashboard');
+        }elseif ($user->role === 'personal trainer'){
+            return redirect()->route('pt_dashboard');
         }
 
         // Default kalau role belum diatur
