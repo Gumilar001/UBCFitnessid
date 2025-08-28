@@ -53,10 +53,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('memberships', MembershipController::class);
 
     // Kelola Produk
-    Route::resource('products', App\Http\Controllers\ProductController::class);
-
-    Route::get('/booking/create', [TrainerBookingController::class, 'create'])->name('booking.create')->middleware('auth');
-    Route::post('/booking/store', [TrainerBookingController::class, 'store'])->name('booking.store')->middleware('auth');
+    Route::resource('products', App\Http\Controllers\ProductController::class);    
 });
 
 /**
@@ -71,6 +68,8 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     Route::resource('transactions', TransactionController::class);
     Route::resource('user-memberships', UserMembershipController::class);
     Route::get('user-memberships/{id}/print', [UserMembershipController::class, 'print'])->name('user-memberships.print');    
+    Route::get('/booking/create', [TrainerBookingController::class, 'create'])->name('booking.create')->middleware('auth');
+    Route::post('/booking/store', [TrainerBookingController::class, 'store'])->name('booking.store')->middleware('auth');
 });
 
 /**
