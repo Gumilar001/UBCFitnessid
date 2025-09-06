@@ -13,6 +13,8 @@ use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsStaff;
 use App\Http\Middleware\IsUser;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\POSController;
+use App\Http\Controllers\ShiftController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -79,6 +81,12 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
  * (Staff hanya bisa lihat membership)
  */
 Route::middleware(['auth', 'role:staff'])->group(function () {
+    Route::get('/pos/membership-detail', [POSController::class, 'getMembershipDetail']);
+    Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
+    Route::post('/pos/transaction', [POSController::class, 'storeTransaction'])->name('pos.transaction');
+    Route::get('/shift', [ShiftController::class, 'index'])->name('shift.index');
+    Route::post('/shift/open', [ShiftController::class, 'open'])->name('shift.open');
+    Route::post('/shift/close', [ShiftController::class, 'close'])->name('shift.close');
     Route::get('/staff/memberships', [MembershipController::class, 'index'])->name('staff.memberships.index');
     Route::get('/staff/users', [UserController::class, 'index'])->name('staff.users.index');
     Route::get('/staff/transactions', [TransactionController::class, 'index'])->name('staff.transactions.index');

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     protected $fillable = [
-        'user_id', 'membership_id', 'amount', 'jenis_pembayaran', 'paid_at'
+        'trans_id','nama', 'membership_id','email','phone','emergency_contact' ,'amount', 'jenis_pembayaran', 'paid_at', 'shift_id'
     ];
 
     public function user()
@@ -18,5 +18,9 @@ class Transaction extends Model
     public function membership()
     {
         return $this->belongsTo(Membership::class);
+    }
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
     }
 }

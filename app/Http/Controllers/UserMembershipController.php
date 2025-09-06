@@ -19,9 +19,10 @@ class UserMembershipController extends Controller
 
     public function create()
     {
-        $users = User::whereHas('transactions') // hanya user dengan transaksi
-                 ->whereDoesntHave('userMemberships') // exclude yang sudah punya membership
-                 ->get();
+        $users = User::where('role', 'user')
+        ->whereDoesntHave('userMemberships')
+        ->get();
+
                  
         $memberships = Membership::all();
         return view('user_memberships.create', compact('users', 'memberships'));
@@ -37,7 +38,11 @@ class UserMembershipController extends Controller
             'status' => 'required|in:active,expired,cancelled',
         ]);
         
+        $users = User::whereDoesntHave('userMemberships')->get();
+
+        // You probably want to create the UserMembership here, e.g.:
         UserMembership::create($request->all());
+
         return redirect()->route('user-memberships.index')->with('success', 'User Membership created!');
     }
 

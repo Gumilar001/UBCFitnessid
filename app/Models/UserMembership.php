@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserMembership extends Model
 {
+
     protected $fillable = [
         'user_id', 'membership_id', 'start_date', 'end_date', 'status'
     ];
@@ -20,16 +21,17 @@ class UserMembership extends Model
     {
         return $this->belongsTo(Membership::class);
     }
-     protected static function booted()
+
+
+    protected static function booted()
     {
         static::creating(function ($user_membership) {
             if (empty($user_membership->rfid_code)) {
-            $now = Carbon::now();
-            $year = $now->year;
-            $dayMonth = $now->format('dm');
-            $random = strtoupper(Str::random(4));
-
-            $user_membership->rfid_code = "OSB-{$year}-{$dayMonth}-{$random}";
+                $now = Carbon::now();
+                $year = $now->year;
+                $dayMonth = $now->format('dm');
+                $random = strtoupper(Str::random(4));
+                $user_membership->rfid_code = "OSB-{$year}-{$dayMonth}-{$random}";
             }
         });
     }

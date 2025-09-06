@@ -57,15 +57,6 @@ class User extends Authenticatable
         return $this->hasMany(UserMembership::class);
     }
 
-    public function transactions()
-    {
-        return $this->hasMany(Transaction::class, 'user_id');
-    }
-
-    public function latestTransaction()
-    {
-        return $this->hasOne(Transaction::class)->latestOfMany();
-    }
 
     public function bookings()
     {
@@ -75,6 +66,11 @@ class User extends Authenticatable
     public function userMemberships()
     {
         return $this->hasOne(UserMembership::class, 'user_id');
+    }
+
+    public function shifts()
+    {
+        return $this->hasMany(Shift::class, 'receptionist_id');
     }
 
 }

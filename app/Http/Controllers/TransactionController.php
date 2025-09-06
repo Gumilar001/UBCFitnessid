@@ -11,7 +11,7 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['user', 'membership'])->get();
+        $transactions = Transaction::with(['user', 'membership', 'shift.receptionist'])->get();        
         return view('transactions.index', compact('transactions'));
     }
 
