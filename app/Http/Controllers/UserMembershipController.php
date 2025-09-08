@@ -24,7 +24,8 @@ class UserMembershipController extends Controller
         ->get();
 
                  
-        $memberships = Membership::all();
+        $memberships = Membership::whereHas('transactions')->get();
+
         return view('user_memberships.create', compact('users', 'memberships'));
     }
 

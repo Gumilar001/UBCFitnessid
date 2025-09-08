@@ -15,6 +15,7 @@ use App\Http\Middleware\IsUser;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\CheckinController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,11 +68,22 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     // Kelola User
     Route::resource('users', UserController::class);
+
+    // Kelola Transactions
     Route::resource('transactions', TransactionController::class);
+
+    // Kelola User Memberships
     Route::resource('user-memberships', UserMembershipController::class);
     Route::get('user-memberships/{id}/print', [UserMembershipController::class, 'print'])->name('user-memberships.print');    
+
+    // Booking Trainer
     Route::get('/booking/create', [TrainerBookingController::class, 'create'])->name('booking.create')->middleware('auth');
     Route::post('/booking/store', [TrainerBookingController::class, 'store'])->name('booking.store')->middleware('auth');
+
+    // Checkins
+    Route::get('/checkins', [CheckinController::class, 'index'])->name('checkins.index');
+    Route::post('/checkins', [CheckinController::class, 'store'])->name('checkins.store');
+
 });
 
 /**
@@ -81,13 +93,21 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
  * (Staff hanya bisa lihat membership)
  */
 Route::middleware(['auth', 'role:staff'])->group(function () {
+
+    // POS
     Route::get('/pos/membership-detail', [POSController::class, 'getMembershipDetail']);
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/transaction', [POSController::class, 'storeTransaction'])->name('pos.transaction');
+
+    // Shift
     Route::get('/shift', [ShiftController::class, 'index'])->name('shift.index');
     Route::post('/shift/open', [ShiftController::class, 'open'])->name('shift.open');
     Route::post('/shift/close', [ShiftController::class, 'close'])->name('shift.close');
+
+    // membership
     Route::get('/staff/memberships', [MembershipController::class, 'index'])->name('staff.memberships.index');
+
+
     Route::get('/staff/users', [UserController::class, 'index'])->name('staff.users.index');
     Route::get('/staff/transactions', [TransactionController::class, 'index'])->name('staff.transactions.index');
     Route::get('/staff/user-memberships', [UserMembershipController::class, 'index'])->name('staff.user-memberships.index');

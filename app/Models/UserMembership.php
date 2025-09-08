@@ -31,8 +31,10 @@ class UserMembership extends Model
                 $year = $now->year;
                 $dayMonth = $now->format('dm');
                 $random = strtoupper(Str::random(4));
-                $user_membership->rfid_code = "OSB-{$year}-{$dayMonth}-{$random}";
+                $user_membership->rfid_code = "UBC-{$year}-{$dayMonth}-{$random}";
             }
         });
     }
+
+       
 }

@@ -70,7 +70,7 @@ class POSController extends Controller
             'shift_id' => $currentShift->id,
         ]);
 
-        return redirect()->route('pos.index')->with('success', 'Transaksi berhasil disimpan.');
+        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil disimpan.');
     }
     // Endpoint AJAX untuk ambil detail membership
     public function getMembershipDetail(Request $request)

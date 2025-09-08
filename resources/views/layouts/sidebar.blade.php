@@ -61,21 +61,16 @@
                 </a>
         @endif
 
-        {{-- Menu khusus STAFF --}}
+        {{-- Menu khusus STAFF --}} 
         @if($role === 'staff')
             <li class="mb-2">
-                <a href="{{ route('dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                <a href="{{ route('shift.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     Dashboard
                 </a>
             </li>
             <li class="mb-2">
                 <a href="{{ route('staff.users.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     Users
-                </a>
-            </li>
-            <li class="mb-2">
-                <a href="{{ route('staff.transactions.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
-                    Transaction
                 </a>
             </li>
             <li class="mb-2">
@@ -89,18 +84,16 @@
                 </button>
 
                 <ul id="management-submenu" class="hidden pl-4 mt-2">
+                     <li class="mb-2">
+                        <a href="{{ route('staff.transactions.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
+                            Transaction
+                        </a>
+                    </li>
                     <li class="mb-2">
                         <a href="{{ route('user-memberships.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">User Membership</a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="{{ route('trainer.dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Trainers</a>
-                    </li>
+                    </li>            
                 </ul>
             </li>
-            <li class="mb-2">
-                <a href="{{ route('products.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
-                    Products
-                </a>
         @endif
 
         {{-- Menu khusus USER --}}
