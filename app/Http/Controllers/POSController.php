@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-\Midtrans\Config::$serverKey = config('midtrans.server_key');
-\Midtrans\Config::$isProduction = config('midtrans.is_production');
-\Midtrans\Config::$clientKey = config('midtrans.client_key');
 
 use App\Models\User;
 use App\Models\Transaction;
@@ -125,13 +122,37 @@ class POSController extends Controller
             'emergency_contact' => $request->emergency_contact,
             'amount' => $total,
             'jenis_pembayaran' => null,
+            'status' => 'pending',
             'paid_at' => now(),
             'shift_id' => $currentShift->id,
             'voucher_code' => $voucherCode, // simpan kode voucher jika ada
         ]);
 
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => $transaction->trans_id,
+                'gross_amount' => $transaction->amount,
+            ),
+            'customer_details' => array(
+                'name' => $request->nama,
+                'email' => $request->email,
+                'phone' => $request->phone,
+            ),
+        );
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+
         // Redirect ke halaman pembayaran
-        return redirect()->route('pos.payment', ['transactionId' => $transaction->trans_id]);
+        return view('pos.payment', compact('transaction', 'snapToken'));
     }
     // Endpoint AJAX untuk ambil detail membership
     public function getMembershipDetail(Request $request)
@@ -275,26 +296,34 @@ class POSController extends Controller
         ]);
     }
 
-    public function payment($transactionId)
-    {
-        $transaction = Transaction::where('trans_id', $transactionId)->firstOrFail();
+    // public function payment($transactionId)
+    // {
 
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transaction->trans_id,
-                'gross_amount' => $transaction->amount,
-            ],
-            'customer_details' => [
-                'first_name' => $transaction->nama,
-                'email' => $transaction->email,
-                'phone' => $transaction->phone,
-            ],
-        ];
+    //     \Midtrans\Config::$serverKey = config('midtrans.server_key');
+    //     \Midtrans\Config::$isProduction = false;
+    //     \Midtrans\Config::$isSanitized = true;
+    //     \Midtrans\Config::$clientKey = config('midtrans.client_key');
+    //     \Midtrans\Config::$is3ds = true;
 
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
+    //     $transaction = Transaction::where('trans_id', $transactionId)->firstOrFail();
 
-        return view('pos.payment', compact('snapToken', 'transactionId'));
-    }
+    //     $params = [
+    //         'transaction_details' => [
+    //             'order_id' => $transaction->trans_id,
+    //             'gross_amount' => $transaction->amount,
+    //         ],
+    //         'customer_details' => [
+    //             'name' => $transaction->nama,
+    //             'email' => $transaction->email,
+    //             'phone' => $transaction->phone,
+    //         ],
+    //     ];
+
+    //     $snapToken = \Midtrans\Snap::getSnapToken($params);
+    //     dd($snapToken);
+
+    //     return view('pos.payment', compact('snapToken', 'transactionId'));
+    // }
 
     public function notification(Request $request)
 {
@@ -315,6 +344,15 @@ class POSController extends Controller
         }
     }
 
+    return response()->json(['success' => true]);
+}
+
+public function updateStatus(Request $request)
+{
+    $transaction = Transaction::where('trans_id', $request->order_id)->first();
+    if ($transaction) {
+        $transaction->update(['status' => $request->status]);
+    }
     return response()->json(['success' => true]);
 }
 }

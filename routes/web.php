@@ -112,6 +112,8 @@ Route::middleware(['auth', 'role:staff'])->group(function () {
     Route::post('/payment', [POSController::class, 'payment'])->name('payment');
     Route::post('/midtrans/notification', [POSController::class, 'notification']);
     Route::get('/pos/payment/{transactionId}', [POSController::class, 'payment'])->name('pos.payment');
+    Route::post('/midtrans/callback', [POSController::class, 'midtransCallback']);
+
 
 
     // Shift
