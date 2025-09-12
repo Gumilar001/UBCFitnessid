@@ -6,7 +6,7 @@
     <div class="max-w-6xl mx-auto mt-6">
         <div class="flex items-center justify-between mb-4">
             @auth
-                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staff')
+                @if(Auth::user()->role === 'admin')
                     <a href="{{ route('users.create') }}" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">Tambah User</a>
                 @endif
             @endauth
@@ -33,26 +33,26 @@
             </div>
         @endif
 
-        <table class="w-full mt-4 border">
+        <table class="min-w-full bg-white rounded shadow border">
             <thead>
-                <tr class="bg-gray-100">
-                    <th class="p-2 border">Nama</th>
-                    <th class="p-2 border">Email</th>                    
-                    <th class="p-2 border">Kontak</th>                    
-                    <th class="p-2 border">Kontak Emergency</th>                    
-                    <th class="p-2 border">Role</th>
-                    <th class="p-2 border">Aksi</th>
+                <tr class="bg-gray-200">
+                    <th class="py-2 px-4 border">Nama</th>
+                    <th class="py-2 px-4 border">Email</th>                    
+                    <th class="py-2 px-4 border">Kontak</th>                    
+                    <th class="py-2 px-4 border">Kontak Emergency</th>                    
+                    <th class="py-2 px-4 border">Role</th>
+                    <th class="py-2 px-4 border">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($users as $user)
+                @forelse($users as $user)
                 <tr>
-                    <td class="p-2 border">{{ $user->name }}</td>
-                    <td class="p-2 border">{{ $user->email }}</td>
-                    <td class="p-2 border">{{ $user->no_hp }}</td>
-                    <td class="p-2 border">{{ $user->no_emergency }}</td>
-                    <td class="p-2 border">{{ ucfirst($user->role) }}</td>
-                    <td class="p-2 border flex gap-2">
+                    <td class="py-2 px-4 border">{{ $user->name }}</td>
+                    <td class="py-2 px-4 border">{{ $user->email }}</td>
+                    <td class="py-2 px-4 border">{{ $user->no_hp }}</td>
+                    <td class="py-2 px-4 border">{{ $user->no_emergency }}</td>
+                    <td class="py-2 px-4 border text-center">{{ ucfirst($user->role) }}</td>
+                    <td class="py-2 px-4 border flex gap-2 item-center">
                         <a href="{{ route('users.edit', $user) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded">Edit</a>
                         <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Yakin hapus user ini?')">
                             @csrf
@@ -61,7 +61,11 @@
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6" class="text-center">Data user kosong</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
 

@@ -9,10 +9,27 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
-    {
-        $transactions = Transaction::with(['user', 'membership', 'shift.receptionist'])->get();        
-        return view('transactions.index', compact('transactions'));
+    public function index(Request $request)
+    {        
+        $query = Transaction::query();
+        
+        // Pencarian berdasarkan nama atau email
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter berdasarkan jenis pembayaran
+        if ($request->filled('jenis_pembayaran') && $request->jenis_pembayaran !== 'all') {
+            $query->where('jenis_pembayaran', $request->jenis_pembayaran);
+        }
+
+        $transactions = $query->latest()->paginate(10)->withQueryString();
+        $metodes = ['BNI', 'BCA', 'QRIS'];
+
+        return view('transactions.index', compact('transactions', 'metodes'));
     }
 
     public function create()

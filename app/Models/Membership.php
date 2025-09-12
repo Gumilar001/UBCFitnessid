@@ -16,5 +16,9 @@ class Membership extends Model
     {
         return $this->hasMany(Transaction::class);
     }
+    public function discounts()
+    {
+        return $this->hasMany(Discount::class);
+    }
 
 }

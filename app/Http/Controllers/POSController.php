@@ -2,16 +2,30 @@
 
 namespace App\Http\Controllers;
 
+\Midtrans\Config::$serverKey = config('midtrans.server_key');
+\Midtrans\Config::$isProduction = config('midtrans.is_production');
+\Midtrans\Config::$clientKey = config('midtrans.client_key');
+
 use App\Models\User;
 use App\Models\Transaction;
 use App\Models\Shift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Membership;
+use App\Models\Discount; 
+use App\Models\Voucher; 
+use Midtrans\Snap;
+use Midtrans\Notification;
+
 
 class POSController extends Controller
 {
-
+    public function __construct()
+    {
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        \Midtrans\Config::$clientKey = config('midtrans.client_key');
+    }
 
     public function storeTransaction(Request $request)
     {
@@ -24,6 +38,7 @@ class POSController extends Controller
             'email' => 'nullable|email',
             'phone' => 'nullable|string|max:20',
             'emergency_contact' => 'nullable|string|max:20',
+            'voucher' => 'nullable|string',
         ]);
 
         $currentShift = Shift::where('receptionist_id', auth()->id())
@@ -33,7 +48,7 @@ class POSController extends Controller
             return redirect()->route('shift.index')->with('error', 'Silakan buka shift dulu.');
         }
 
-        // Jika membership_id kosong → cari "Visit"
+        // Membership logic
         $membershipId = $request->membership_id;
         if (!$membershipId) {
             $visitMembership = Membership::where('name', 'VISIT')->first();
@@ -42,18 +57,62 @@ class POSController extends Controller
             }
         }
 
-        // Jika type membership, buat user baru jika belum ada
         if ($request->type === 'membership') {
             $user = User::where('email', $request->email)->first();
             if (!$user && $request->email) {
                 $user = User::create([
                     'name' => $request->nama,
                     'email' => $request->email,
-                    'password' => Hash::make('12345678'), // default password, bisa diganti
+                    'password' => Hash::make('12345678'),
                     'no_hp' => $request->phone,
                     'no_emergency' => $request->emergency_contact,
                     'role' => 'user',
                 ]);
+            }
+        }
+
+        // Diskon membership
+        $membership = Membership::find($membershipId);
+        $discount = Discount::where('membership_id', $membershipId)
+            ->where(function($q){
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function($q){
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->first();
+
+        $total = $membership ? $membership->price : $request->total;
+        if ($discount) {
+            if ($discount->type == 'percent') {
+                $total = $total - ($total * $discount->value / 100);
+            } else {
+                $total = $total - $discount->value;
+            }
+            $total = max($total, 0);
+        }
+
+        // Diskon voucher
+        $voucherCode = $request->voucher;
+        $voucher = null;
+        if ($voucherCode) {
+            $voucher = Voucher::where('code', $voucherCode)
+                ->where(function($q){
+                    $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+                })
+                ->where(function($q){
+                    $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+                })
+                ->where('is_active', true)
+                ->first();
+
+            if ($voucher) {
+                if ($voucher->type == 'percent') {
+                    $total = $total - ($total * $voucher->value / 100);
+                } else {
+                    $total = $total - $voucher->value;
+                }
+                $total = max($total, 0);
             }
         }
 
@@ -64,13 +123,15 @@ class POSController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'emergency_contact' => $request->emergency_contact,
-            'amount' => $request->total,
-            'jenis_pembayaran' => null, // diisi saat pembayaran
-            'paid_at' => now(), // isi dengan tanggal sekarang agar tidak null
+            'amount' => $total,
+            'jenis_pembayaran' => null,
+            'paid_at' => now(),
             'shift_id' => $currentShift->id,
+            'voucher_code' => $voucherCode, // simpan kode voucher jika ada
         ]);
 
-        return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil disimpan.');
+        // Redirect ke halaman pembayaran
+        return redirect()->route('pos.payment', ['transactionId' => $transaction->trans_id]);
     }
     // Endpoint AJAX untuk ambil detail membership
     public function getMembershipDetail(Request $request)
@@ -79,11 +140,35 @@ class POSController extends Controller
         if (!$membership) {
             return response()->json(['error' => 'Membership tidak ditemukan'], 404);
         }
-        // Diskon bisa diatur sesuai kebutuhan, misal dari request atau logic lain
-        $diskon = $request->diskon ?? 0;
+        $discount = \App\Models\Discount::where('membership_id', $membership->id)
+            ->where(function($q){
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function($q){
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->first();
+
+        $finalPrice = $membership->price;
+        $discountData = null;
+        if($discount) {
+            if($discount->type == 'percent') {
+                $finalPrice = $membership->price - ($membership->price * $discount->value / 100);
+            } else {
+                $finalPrice = $membership->price - $discount->value;
+            }
+            $finalPrice = max($finalPrice, 0);
+            $discountData = [
+                'type' => $discount->type,
+                'value' => $discount->value,
+                'name' => $discount->name,
+            ];
+        }
+
         return response()->json([
             'price' => $membership->price,
-            'diskon' => $diskon,
+            'discount' => $discountData,
+            'final_price' => $finalPrice,
             'name' => $membership->name,
             'duration' => $membership->duration
         ]);
@@ -103,13 +188,17 @@ class POSController extends Controller
 
     public function index()
     {
-
-        // Generate trans_id sementara (bisa tampil di form)
         $transId = 'TRX-' . date('ymd') . '-' . mt_rand(1000, 9999);
-
         $memberships = Membership::all();
 
-        // cari shift aktif
+        // Ambil diskon aktif untuk setiap membership
+        $today = now()->toDateString();
+        $discounts = Discount::where(function($q) use ($today) {
+            $q->whereNull('start_date')->orWhere('start_date', '<=', $today);
+        })->where(function($q) use ($today) {
+            $q->whereNull('end_date')->orWhere('end_date', '>=', $today);
+        })->get()->groupBy('membership_id');
+
         $currentShift = Shift::where('receptionist_id', auth()->id())
             ->whereNull('end_time')
             ->first();
@@ -118,7 +207,7 @@ class POSController extends Controller
             return redirect()->route('shift.index')->with('error', 'Silakan buka shift dulu.');
         }
 
-        return view('pos.index', compact('currentShift', 'memberships', 'transId'));
+        return view('pos.index', compact('currentShift', 'memberships', 'transId', 'discounts'));
     }
 
     public function storeMember(Request $request)
@@ -159,5 +248,73 @@ class POSController extends Controller
         return redirect()->route('pos.index')->with('success', 'Member baru berhasil ditambahkan.');
     }
 
+    // Endpoint AJAX untuk ambil detail voucher
+    public function getVoucherDetail(Request $request)
+    {
+        $voucherCode = $request->voucher;
+        $voucher = \App\Models\Voucher::where('code', $voucherCode)
+            ->where(function($q){
+                $q->whereNull('start_date')->orWhere('start_date', '<=', now());
+            })
+            ->where(function($q){
+                $q->whereNull('end_date')->orWhere('end_date', '>=', now());
+            })
+            ->where('is_active', true)
+            ->first();
 
+        if (!$voucher) {
+            return response()->json(['error' => 'Voucher tidak valid atau sudah kadaluarsa']);
+        }
+
+        return response()->json([
+            'voucher' => [
+                'type' => $voucher->type,
+                'value' => $voucher->value,
+                'name' => $voucher->name ?? '',
+            ]
+        ]);
+    }
+
+    public function payment($transactionId)
+    {
+        $transaction = Transaction::where('trans_id', $transactionId)->firstOrFail();
+
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaction->trans_id,
+                'gross_amount' => $transaction->amount,
+            ],
+            'customer_details' => [
+                'first_name' => $transaction->nama,
+                'email' => $transaction->email,
+                'phone' => $transaction->phone,
+            ],
+        ];
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+        return view('pos.payment', compact('snapToken', 'transactionId'));
+    }
+
+    public function notification(Request $request)
+{
+    $notif = new \Midtrans\Notification();
+
+    $transactionStatus = $notif->transaction_status;
+    $orderId = $notif->order_id;
+
+    $transaction = Transaction::where('trans_id', $orderId)->first();
+
+    if ($transaction) {
+        if ($transactionStatus == 'settlement') {
+            $transaction->update(['status' => 'paid']);
+        } elseif ($transactionStatus == 'pending') {
+            $transaction->update(['status' => 'pending']);
+        } elseif ($transactionStatus == 'expire' || $transactionStatus == 'cancel') {
+            $transaction->update(['status' => 'failed']);
+        }
+    }
+
+    return response()->json(['success' => true]);
+}
 }

@@ -27,7 +27,7 @@
                         @endforeach
                     </select>
 
-                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Filter</button>
                 </form>
             @endif
         </div>
@@ -35,22 +35,22 @@
         {{-- Tabel Booking --}}
         <table class="w-full mt-4 border">
             <thead>
-                <tr class="bg-gray-100">
-                    <th class="p-2 border">User</th>
-                    <th class="p-2 border">Trainer</th>
-                    <th class="p-2 border">Jadwal</th>
-                    <th class="p-2 border">Catatan</th>
-                    <th class="p-2 border">Status</th>
+                <tr class="bg-gray-200">
+                    <th class="py-2 px-4 border">User</th>
+                    <th class="py-2 px-4 border">Trainer</th>
+                    <th class="py-2 px-4 border">Jadwal</th>
+                    <th class="py-2 px-4 border">Catatan</th>
+                    <th class="py-2 px-4 border">Status</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($bookings as $booking)
                     <tr>
-                        <td class="p-2 border">{{ $booking->user->name }}</td>
-                        <td class="p-2 border">{{ $booking->trainer->name }}</td>
-                        <td class="p-2 border">{{ $booking->schedule }}</td>
-                        <td class="p-2 border">{{ $booking->notes }}</td>
-                        <td class="p-2 border">{{ ucfirst($booking->status) }}</td>
+                        <td class="py-2 px-4 border">{{ $booking->user->name }}</td>
+                        <td class="py-2 px-4 border">{{ $booking->trainer->name }}</td>
+                        <td class="py-2 px-4 border">{{ $booking->schedule }}</td>
+                        <td class="py-2 px-4 border">{{ $booking->notes }}</td>
+                        <td class="py-2 px-4 border">{{ ucfirst($booking->status) }}</td>
                     </tr>
                 @empty
                     <tr>

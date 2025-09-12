@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\VoucherController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,6 +58,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Kelola Produk
     Route::resource('products', App\Http\Controllers\ProductController::class);    
+
+    // Kelola Discounts
+    Route::resource('discounts', App\Http\Controllers\DiscountController::class);
+
+    // Kelola Vouchers
+    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
+    Route::resource('vouchers', App\Http\Controllers\VoucherController::class);
 });
 
 /**
@@ -98,6 +107,12 @@ Route::middleware(['auth', 'role:staff'])->group(function () {
     Route::get('/pos/membership-detail', [POSController::class, 'getMembershipDetail']);
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/transaction', [POSController::class, 'storeTransaction'])->name('pos.transaction');
+    Route::get('/pos/voucher-detail', [POSController::class, 'getVoucherDetail']);
+
+    Route::post('/payment', [POSController::class, 'payment'])->name('payment');
+    Route::post('/midtrans/notification', [POSController::class, 'notification']);
+    Route::get('/pos/payment/{transactionId}', [POSController::class, 'payment'])->name('pos.payment');
+
 
     // Shift
     Route::get('/shift', [ShiftController::class, 'index'])->name('shift.index');

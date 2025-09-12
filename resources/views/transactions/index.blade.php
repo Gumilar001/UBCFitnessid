@@ -1,39 +1,60 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800">Transaction</h2>
+    </x-slot>
+
     <div class="container mx-auto p-6">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold">Transaction List</h2>
-            <a href="{{ route('pos.index') }}" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">Add Transaction</a>
+        <div class="flex items-center justify-between mb-4">
+            @auth
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'staff')
+                    <a href="{{ route('pos.index') }}" class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 rounded">Tambah Transaction</a>
+                @endif
+            @endauth
+
+            <form method="GET" action="{{ route('transactions.index') }}" class="flex gap-2">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama/email" class="border rounded p-2">
+                
+                <select name="jenis_pembayaran" class="border rounded p-2 pr-8">
+                    <option value="all" {{ request('jenis_pembayaran') === 'all' ? 'selected' : '' }}>Semua Metode Pembayaran</option>
+                    @foreach($metodes as $jenis_pembayaran)
+                        <option value="{{ $jenis_pembayaran }}" {{ request('jenis_pembayaran') === $jenis_pembayaran ? 'selected' : '' }}>
+                            {{ ucfirst($jenis_pembayaran) }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">Filter</button>
+            </form>
         </div>
+
         @if(session('success'))
             <div class="mb-4 text-green-600">{{ session('success') }}</div>
         @endif
-        <table class="min-w-full bg-white rounded shadow">
+        <table class="min-w-full border bg-white rounded shadow">
             <thead>
-                <tr>
-                    <th class="py-2 px-4">Member</th>
-                    <th class="py-2 px-4">Membership</th>
-                    <th class="py-2 px-4">Email</th>
-                    <th class="py-2 px-4">Phone</th>
-                    <th class="py-2 px-4">Emergency Contact</th>
-                    <th class="py-2 px-4">Amount</th>
-                    <th class="py-2 px-4">Payment Method</th>
-                    <th class="py-2 px-4">Receptionist</th>
-                    <th class="py-2 px-4">Paid At</th>
-                    <th class="py-2 px-4">Action</th>
+                <tr class="bg-gray-200">
+                    <th class="py-2 px-4 border">Member</th>
+                    <th class="py-2 px-4 border">Membership</th>
+                    <th class="py-2 px-4 border">Email</th>
+                    <th class="py-2 px-4 border">Phone</th>
+                    <th class="py-2 px-4 border">Emergency Contact</th>
+                    <th class="py-2 px-4 border">Amount</th>
+                    <th class="py-2 px-4 border">Payment Method</th>
+                    <th class="py-2 px-4 border">Receptionist</th>
+                    <th class="py-2 px-4 border">Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($transactions as $transaction)
+                @forelse($transactions as $transaction)
                 <tr>
-                    <td class="py-2 px-4">{{ $transaction->nama }}</td>
-                    <td class="py-2 px-4">{{ $transaction->membership->name }}</td>
-                    <td class="py-2 px-4">{{ $transaction->email ?? '-' }}</td>
-                    <td class="py-2 px-4">{{ $transaction->phone ?? '-' }}</td>
-                    <td class="py-2 px-4">{{ $transaction->emergency_contact ?? '-' }}</td>
-                    <td class="py-2 px-4">Rp{{ number_format($transaction->amount,0,',','.') }}</td>
-                    <td class="py-2 px-4">{{ ucfirst($transaction->jenis_pembayaran) }}</td>
-                    <td class="py-2 px-4">{{ $transaction->shift->receptionist->name ?? '-' }}</td>
-                    <td class="py-2 px-4">{{ $transaction->paid_at }}</td>
+                    <td class="py-2 px-4 border">{{ $transaction->nama }}</td>
+                    <td class="py-2 px-4 border text-center">{{ $transaction->membership->name }}</td>
+                    <td class="py-2 px-4 border">{{ $transaction->email ?? '-' }}</td>
+                    <td class="py-2 px-4 border">{{ $transaction->phone ?? '-' }}</td>
+                    <td class="py-2 px-4 border">{{ $transaction->emergency_contact ?? '-' }}</td>
+                    <td class="py-2 px-4 border text-center">Rp{{ number_format($transaction->amount,0,',','.') }}</td>
+                    <td class="py-2 px-4 border">{{ ucfirst($transaction->jenis_pembayaran) }}</td>
+                    <td class="py-2 px-4 border">{{ $transaction->shift->receptionist->name ?? '-' }}</td>
                     <td class="py-2 px-4 flex gap-2">
                         <a href="{{ route('transactions.edit', $transaction) }}" class="text-blue-600">Edit</a>
                         <form action="{{ route('transactions.destroy', $transaction) }}" method="POST" onsubmit="return confirm('Delete this transaction?')">
@@ -43,7 +64,11 @@
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="9" class="text-center">Data transaction kosong</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

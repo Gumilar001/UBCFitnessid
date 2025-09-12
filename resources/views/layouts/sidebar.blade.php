@@ -53,12 +53,16 @@
                     <li class="mb-2">
                         <a href="{{ route('trainer.dashboard') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Trainers</a>
                     </li>
+                    <li class="mb-2">
+                        <a href="{{ route('discounts.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Discounts & Voucher</a>
+                    </li>
                 </ul>
             </li>
-            <li class="mb-2">
+            <!-- <li class="mb-2">
                 <a href="{{ route('products.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                     Products
                 </a>
+            </li> -->
         @endif
 
         {{-- Menu khusus STAFF --}} 
@@ -129,11 +133,11 @@
         @endif
 
         {{-- Menu Settings (semua role) --}}
-        <li class="mb-2">
+        <!-- <li class="mb-2">
             <a href="{{ route('profile.edit') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                 Settings
             </a>
-        </li>
+        </li> -->
     </ul>
 </nav>
 <!-- Sidebar Mobile -->

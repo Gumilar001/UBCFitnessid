@@ -10,7 +10,7 @@
     <form id="posForm" action="{{ route('pos.transaction') }}" method="POST" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
         @csrf
         <div>
-        <label for="trans_id">Transaction ID</label>
+        <label for="trans_id" class="text-sm font-medium text-gray-700">Transaction ID</label>
             <input type="text" name="trans_id" id="trans_id" 
                 value="{{ $transId }}" readonly 
                 class="border p-2 rounded w-full">
@@ -56,10 +56,14 @@
                 <input type="text" id="emergency_contact" name="emergency_contact" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
         </div>
-            <div>
-                <label class="block">Paid At</label>
-                <input type="date" name="paid_at" class="w-full border rounded px-3 py-2" required value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" readonly>
+            <div class="mt-4">
+                <!-- <label class="block text-sm font-medium text-gray-700">Voucher Kode</label> -->
+                <input type="hidden" id="voucher" name="voucher" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Paid At</label>
+                <input type="date" name="paid_at" class="w-full border rounded px-3 py-2" required value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" readonly>
+            </div>            
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Total</label>
             <input type="number" id="totalInput" name="total" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
@@ -67,10 +71,15 @@
         <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Simpan Transaksi</button>
     </form>
     <script>
+    let membershipPrice = 0;
+    let membershipDiscount = 0;
+    let membershipDiscountType = null;
+
     document.getElementById('typeSelect').addEventListener('change', function() {
         var type = this.value;
         document.getElementById('membershipSection').style.display = (type === 'membership') ? 'block' : 'none';
     });
+
     document.getElementById('membershipSelect').addEventListener('change', function() {
         var membershipId = this.value;
         if(membershipId) {
@@ -81,17 +90,65 @@
                         document.getElementById('membershipDetail').innerHTML = '<span style="color:red">'+data.error+'</span>';
                         document.getElementById('totalInput').value = '';
                     } else {
+                        membershipPrice = data.price;
+                        membershipDiscount = data.discount ? data.discount.value : 0;
+                        membershipDiscountType = data.discount ? data.discount.type : null;
+                        let diskonText = '-';
+                        let finalPrice = membershipPrice;
+                        if(data.discount) {
+                            if(data.discount.type === 'percent') {
+                                diskonText = data.discount.value + '%';
+                                finalPrice = membershipPrice - (membershipPrice * data.discount.value / 100);
+                            } else {
+                                diskonText = 'Rp ' + Number(data.discount.value).toLocaleString();
+                                finalPrice = membershipPrice - data.discount.value;
+                            }
+                            finalPrice = Math.max(finalPrice, 0);
+                        }
                         document.getElementById('membershipDetail').innerHTML =
-                            'Harga: Rp ' + data.price + '<br>' +
-                            'Diskon: Rp ' + data.diskon + '<br>' +
+                            'Harga: Rp ' + Number(membershipPrice).toLocaleString() + '<br>' +
+                            'Diskon: ' + diskonText + '<br>' +
+                            'Harga Akhir: Rp ' + Number(finalPrice).toLocaleString() + '<br>' +
                             'Durasi: ' + data.duration + ' hari';
-                        document.getElementById('totalInput').value = data.price - data.diskon;
+                        document.getElementById('totalInput').value = finalPrice;
                     }
                 });
         } else {
             document.getElementById('membershipDetail').innerHTML = '';
             document.getElementById('totalInput').value = '';
+            membershipPrice = 0;
+            membershipDiscount = 0;
+            membershipDiscountType = null;
         }
     });
-</div>
+
+    // Voucher AJAX
+    document.getElementById('voucher').addEventListener('blur', function() {
+        let voucherCode = this.value;
+        let total = parseFloat(document.getElementById('totalInput').value) || 0;
+        if(voucherCode && total > 0) {
+            fetch('/pos/voucher-detail?voucher=' + voucherCode)
+                .then(res => res.json())
+                .then(data => {
+                    let finalTotal = total;
+                    let voucherText = '-';
+                    if(data.voucher) {
+                        if(data.voucher.type === 'percent') {
+                            voucherText = data.voucher.value + '%';
+                            finalTotal = finalTotal - (finalTotal * data.voucher.value / 100);
+                        } else {
+                            voucherText = 'Rp ' + Number(data.voucher.value).toLocaleString();
+                            finalTotal = finalTotal - data.voucher.value;
+                        }
+                        finalTotal = Math.max(finalTotal, 0);
+                        document.getElementById('membershipDetail').innerHTML += '<br>Voucher: ' + voucherText + '<br>Total Setelah Voucher: Rp ' + Number(finalTotal).toLocaleString();
+                        document.getElementById('totalInput').value = finalTotal;
+                    } else if(data.error) {
+                        document.getElementById('membershipDetail').innerHTML += '<br><span style="color:red">'+data.error+'</span>';
+                    }
+                });
+        }
+    });
+    </script>
+    </div>
 </x-app-layout>

@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800">Halaman Shift</h2>
+        <h2 class="font-semibold text-xl text-gray-800">Dashboard</h2>
     </x-slot>
 <div class="container mx-auto p-6">
     <div class="card shadow-lg p-6 bg-white rounded-lg">
@@ -32,16 +32,49 @@
     </div>
 </div>
 <div class="container mx-auto p-6">
-    <div class="card shadow-lg p-6 bg-white rounded-lg">
-        <div class="flex flex-nowrap justify-center">                
-            <div class="p-6 m-4 ">
-                <img class="w-full max-w-80 h-full max-h-48" src="{{ asset('images/tap-to-pay.png') }}" alt="">
+    <div class="flex space-x justify-center">
+        <div class="card shadow-lg p-6 bg-white rounded-lg m-4">
+            <div class="card-header">
+                <h4 class="text-lg font-bold mb-4">Check In Membership</h4>
+                <div class="flex flex-nowrap justify-center">                
+                    <div class="p-6 m-4 ">
+                        <img class="w-full max-w-80 h-full max-h-48" src="{{ asset('images/tap-to-pay.png') }}" alt="">
 
-                <button class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 ml-12 mt-3 rounded">
-                    <a href="{{ route('checkins.index') }}" >Checkin</a>
-                </button>
+                        <button class="bg-blue-600 hover:bg-blue-800 text-white px-4 py-2 ml-12 mt-3 rounded">
+                            <a href="{{ route('checkins.index') }}" >Check In</a>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- <div class="card shadow-lg p-6 bg-white rounded-lg m-4">
+            <div class="card-header">
+                <h4 class="text-lg font-bold mb-4">Check In Personal Trainer</h4>
+                <div class="flex flex-nowrap justify-center">                
+                    <div class="p-6 m-4 ">
+                        <img class="w-full max-w-80 h-full max-h-48" src="{{ asset('images/tap-to-pay.png') }}" alt="">
+
+                        <button class="bg-green-600 hover:bg-green-800 text-white px-4 py-2 ml-12 mt-3 rounded">
+                            <a href="{{ route('checkins.index') }}" >Check In</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-lg p-6 bg-white rounded-lg m-4">
+            <div class="card-header">
+                <h4 class="text-lg font-bold mb-4">CheckOut Personal Trainer</h4>
+                <div class="flex flex-nowrap justify-center">                
+                    <div class="p-6 m-4 ">
+                        <img class="w-full max-w-80 h-full max-h-48" src="{{ asset('images/tap-to-pay.png') }}" alt="">
+
+                        <button class="bg-red-600 hover:bg-red-800 text-white px-4 py-2 ml-12 mt-3 rounded">
+                            <a href="{{ route('checkins.index') }}" >Check Out</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
     </div>
 </div>
 

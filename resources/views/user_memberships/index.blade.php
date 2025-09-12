@@ -1,4 +1,7 @@
 <x-app-layout>
+        <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800">Manajemen User Membership</h2>
+    </x-slot>
     <div class="container mx-auto p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">User Membership List</h2>
@@ -9,24 +12,24 @@
         @endif
         <table class="min-w-full bg-white rounded shadow">
             <thead>
-                <tr>
-                    <th class="py-2 px-4">User</th>
-                    <th class="py-2 px-4">Membership</th>
-                    <th class="py-2 px-4">Start Date</th>
-                    <th class="py-2 px-4">End Date</th>
-                    <th class="py-2 px-4">Status</th>
-                    <th class="py-2 px-4">Action</th>
+                <tr class="bg-gray-200">
+                    <th class="py-2 px-4 border">User</th>
+                    <th class="py-2 px-4 border">Membership</th>
+                    <th class="py-2 px-4 border">Start Date</th>
+                    <th class="py-2 px-4 border">End Date</th>
+                    <th class="py-2 px-4 border">Status</th>
+                    <th class="py-2 px-4 border">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($userMemberships as $um)
                 <tr>
-                    <td class="py-2 px-4">{{ $um->user->name }}</td>
-                    <td class="py-2 px-4">{{ $um->membership->name }}</td>
-                    <td class="py-2 px-4">{{ $um->start_date }}</td>
-                    <td class="py-2 px-4">{{ $um->end_date }}</td>
-                    <td class="py-2 px-4">{{ ucfirst($um->status) }}</td>
-                    <td class="py-2 px-4 flex gap-2">
+                    <td class="py-2 px-4 border">{{ $um->user->name }}</td>
+                    <td class="py-2 px-4 border text-center">{{ $um->membership->name }}</td>
+                    <td class="py-2 px-4 border text-center">{{ $um->start_date }}</td>
+                    <td class="py-2 px-4 border text-center">{{ $um->end_date }}</td>
+                    <td class="py-2 px-4 border text-center">{{ ucfirst($um->status) }}</td>
+                    <td class="py-2 px-4 border flex gap-2">
                         <a href="{{ route('user-memberships.edit', $um) }}" class="text-blue-600">Edit</a>
                         <a href="{{ route('user-memberships.print', $um->id) }}" target="_blank" class="text-green-600">
                             Cetak
@@ -35,8 +38,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600">Delete</button>
-                        </form>
-                        
+                        </form>                        
                     </td>
                 </tr>
                 @endforeach

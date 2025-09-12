@@ -25,7 +25,7 @@
                         <th class="px-4 py-2 border">Waktu Check-in</th>
                     </tr>
                 </thead>
-                <tbody class="text-center">
+                <tbody>
                     @foreach($checkins as $c)
                         <tr>
                             <td class="border px-4 py-2">{{ $c->user->name }}</td>
