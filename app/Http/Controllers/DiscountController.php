@@ -66,6 +66,6 @@ class DiscountController extends Controller
     public function destroy(Discount $discount)
     {
         $discount->delete();
-        return redirect()->route('discounts.index')->with('success', 'Diskon berhasil dihapus.');
+        return redirect()->route('discounts.index')->with('success', 'Diskon berhasil dihapus.'); 
     }
 }

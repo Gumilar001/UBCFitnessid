@@ -45,29 +45,29 @@
     </div>
 
     <script>
-    function setMembership(select) {
-        let membership = select.options[select.selectedIndex].getAttribute('data-membership');
-        let membershipId = select.options[select.selectedIndex].getAttribute('data-membership-id');
-        let duration = parseInt(select.options[select.selectedIndex].getAttribute('data-duration')) || 0;
+        function setMembership(select) {
+            let membership = select.options[select.selectedIndex].getAttribute('data-membership');
+            let membershipId = select.options[select.selectedIndex].getAttribute('data-membership-id');
+            let duration = parseInt(select.options[select.selectedIndex].getAttribute('data-duration')) || 0;
 
-        document.getElementById('membership').value = membership;
-        document.getElementById('membership_id').value = membershipId;
+            document.getElementById('membership').value = membership;
+            document.getElementById('membership_id').value = membershipId;
 
-        if (duration > 0) {
-            let today = new Date();
+            if (duration > 0) {
+                let today = new Date();
 
-            // Start Date = hari ini
-            let startDate = today.toISOString().split('T')[0];
-            document.getElementById('start_date').value = startDate;
+                // Start Date = hari ini
+                let startDate = today.toISOString().split('T')[0];
+                document.getElementById('start_date').value = startDate;
 
-            // End Date = hari ini + duration (misal 30 hari)
-            let endDate = new Date();
-            endDate.setDate(today.getDate() + duration);
-            document.getElementById('end_date').value = endDate.toISOString().split('T')[0];
-        } else {
-            document.getElementById('start_date').value = '';
-            document.getElementById('end_date').value = '';
+                // End Date = hari ini + duration (misal 30 hari)
+                let endDate = new Date();
+                endDate.setDate(today.getDate() + duration);
+                document.getElementById('end_date').value = endDate.toISOString().split('T')[0];
+            } else {
+                document.getElementById('start_date').value = '';
+                document.getElementById('end_date').value = '';
+            }
         }
-    }
     </script>
 </x-app-layout>

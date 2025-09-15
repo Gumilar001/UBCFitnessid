@@ -22,7 +22,6 @@ class UserMembershipController extends Controller
         $users = User::where('role', 'user')
         ->whereDoesntHave('userMemberships')
         ->get();
-
                  
         $memberships = Membership::whereHas('transactions')->get();
 

@@ -15,7 +15,7 @@ class DashboardController extends Controller
         $jumlahPengguna = User::where('role', 'user')
             ->count();
 
-        $pendapatanBulanan = Transaction::where('jenis_pembayaran', 'transfer')
+        $pendapatanBulanan = Transaction::where('membership_id', '!=', '5')
             ->whereMonth('created_at', now()->month)
             ->sum('amount');
 

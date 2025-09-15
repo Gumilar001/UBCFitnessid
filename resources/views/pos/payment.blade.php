@@ -13,7 +13,7 @@
                     </tr>
                     <tr>
                         <td>Memberships</td>
-                        <td>: {{ $transaction->membership_id }}</td>
+                        <td>: {{ $transaction->membership->name }}</td>
                     </tr>
                     <tr>
                         <td>Email</td>
@@ -39,18 +39,55 @@
         </div>
     </div>
 
-
     
 </div>
 <!-- Midtrans Snap JS -->
-<script src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
-<script>
-document.getElementById('pay-button').onclick = function() {
-    snap.pay('{{ $snapToken }}', {
-        onSuccess: function(result){ window.location.href = "{{ route('transactions.index') }}"; },
-        onPending: function(result){ window.location.href = "{{ route('transactions.index') }}"; },
-        onError: function(result){ alert('Pembayaran gagal!'); }
-    });
-};
+<script type="text/javascript"
+    src="https://app.sandbox.midtrans.com/snap/snap.js"
+    data-client-key="{{ config('midtrans.client_key') }}">
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script type="text/javascript">
+    document.getElementById('pay-button').onclick = function () {
+        snap.pay('{{ $snapToken }}', {
+            onSuccess: function(result){
+                console.log(result);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pembayaran Berhasil',
+                    text: 'Terima kasih, transaksi kamu sukses!',
+                    confirmButtonText: 'OK'
+                });
+            },
+            onPending: function(result){
+                console.log(result);
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Menunggu Pembayaran',
+                    text: 'Transaksi kamu masih pending. Selesaikan pembayaran dulu.',
+                    confirmButtonText: 'OK'
+                });
+            },
+            onError: function(result){
+                console.log(result);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Pembayaran Gagal',
+                    text: 'Silakan coba lagi atau gunakan metode lain.',
+                    confirmButtonText: 'OK'
+                });
+            },
+            onClose: function(){
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Popup Ditutup',
+                    text: 'Kamu menutup jendela pembayaran sebelum selesai.',
+                    confirmButtonText: 'Mengerti'
+                });
+            }
+        });
+    };
 </script>
 </x-app-layout>

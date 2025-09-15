@@ -107,11 +107,11 @@ Route::middleware(['auth', 'role:staff'])->group(function () {
     Route::get('/pos/membership-detail', [POSController::class, 'getMembershipDetail']);
     Route::get('/pos', [POSController::class, 'index'])->name('pos.index');
     Route::post('/pos/transaction', [POSController::class, 'storeTransaction'])->name('pos.transaction');
+    Route::get('/pos/payment/{transactionId}', [POSController::class, 'payment'])->name('pos.payment');
     Route::get('/pos/voucher-detail', [POSController::class, 'getVoucherDetail']);
 
     Route::post('/payment', [POSController::class, 'payment'])->name('payment');
     Route::post('/midtrans/notification', [POSController::class, 'notification']);
-    Route::get('/pos/payment/{transactionId}', [POSController::class, 'payment'])->name('pos.payment');
     Route::post('/midtrans/callback', [POSController::class, 'midtransCallback']);
 
 

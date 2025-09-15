@@ -13,6 +13,8 @@ use App\Models\Discount;
 use App\Models\Voucher; 
 use Midtrans\Snap;
 use Midtrans\Notification;
+use Midtrans\Config;
+
 
 
 class POSController extends Controller
@@ -128,32 +130,10 @@ class POSController extends Controller
             'voucher_code' => $voucherCode, // simpan kode voucher jika ada
         ]);
 
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = config('midtrans.server_key');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
-
-        $params = array(
-            'transaction_details' => array(
-                'order_id' => $transaction->trans_id,
-                'gross_amount' => $transaction->amount,
-            ),
-            'customer_details' => array(
-                'name' => $request->nama,
-                'email' => $request->email,
-                'phone' => $request->phone,
-            ),
-        );
-
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-        // Redirect ke halaman pembayaran
-        return view('pos.payment', compact('transaction', 'snapToken'));
+     // Redirect ke halaman pembayaran
+    return redirect()->route('pos.payment', ['transactionId' => $request->trans_id]);
     }
+
     // Endpoint AJAX untuk ambil detail membership
     public function getMembershipDetail(Request $request)
     {
@@ -201,7 +181,7 @@ class POSController extends Controller
 
         static::creating(function ($transaction) {
             if (empty($transaction->trans_id)) {
-                $transaction->trans_id = 'TRX-' . strtoupper(uniqid());
+                $transaction->trans_id = 'TRX-' . mt_rand(1000, 9999);
             }
         });
     }
@@ -296,34 +276,31 @@ class POSController extends Controller
         ]);
     }
 
-    // public function payment($transactionId)
-    // {
+    public function payment($transactionId)
+    {
+        $transaction = Transaction::where('trans_id', $transactionId)->firstOrFail();
 
-    //     \Midtrans\Config::$serverKey = config('midtrans.server_key');
-    //     \Midtrans\Config::$isProduction = false;
-    //     \Midtrans\Config::$isSanitized = true;
-    //     \Midtrans\Config::$clientKey = config('midtrans.client_key');
-    //     \Midtrans\Config::$is3ds = true;
+        \Midtrans\Config::$serverKey = config('midtrans.server_key');
+        \Midtrans\Config::$isProduction = config('midtrans.is_production');
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
 
-    //     $transaction = Transaction::where('trans_id', $transactionId)->firstOrFail();
+        $params = [
+            'transaction_details' => [
+                'order_id' => $transaction->trans_id,
+                'gross_amount' => $transaction->amount,
+            ],
+            'customer_details' => [
+                'name' => $transaction->nama,
+                'email' => $transaction->email,
+                'phone' => $transaction->phone,
+            ],
+        ];
 
-    //     $params = [
-    //         'transaction_details' => [
-    //             'order_id' => $transaction->trans_id,
-    //             'gross_amount' => $transaction->amount,
-    //         ],
-    //         'customer_details' => [
-    //             'name' => $transaction->nama,
-    //             'email' => $transaction->email,
-    //             'phone' => $transaction->phone,
-    //         ],
-    //     ];
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-    //     $snapToken = \Midtrans\Snap::getSnapToken($params);
-    //     dd($snapToken);
-
-    //     return view('pos.payment', compact('snapToken', 'transactionId'));
-    // }
+        return view('pos.payment', compact('transaction', 'snapToken'));
+    }
 
     public function notification(Request $request)
 {

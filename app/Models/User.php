@@ -73,4 +73,6 @@ class User extends Authenticatable
         return $this->hasMany(Shift::class, 'receptionist_id');
     }
 
+    
+
 }
