@@ -14,5 +14,10 @@ class Shift extends Model
     {
         return $this->belongsTo(User::class, 'receptionist_id');
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'shift_id');
+    }
     
 }

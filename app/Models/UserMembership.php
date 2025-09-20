@@ -9,7 +9,7 @@ class UserMembership extends Model
 {
 
     protected $fillable = [
-        'user_id', 'membership_id', 'start_date', 'end_date', 'status'
+        'user_id', 'membership_id', 'rfid_code', 'start_date', 'end_date', 'status'
     ];
 
     public function user()

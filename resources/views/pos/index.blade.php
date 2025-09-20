@@ -7,7 +7,7 @@
     <p>Mulai: {{ $currentShift->start_time }}</p>
     <hr>
     <h4 class="text-lg font-bold mb-4">Transaksi Baru</h4>
-    <form id="posForm" action="{{ route('pos.transaction') }}" method="POST" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
+    <form id="posForm" action="{{ route('pos.transaction') }}" method="POST" class="space-y-4 bg-white p-6 rounded-lg shadow-md" enctype="multipart/form-data">
         @csrf
         <div>
         <label for="trans_id" class="text-sm font-medium text-gray-700">Transaction ID</label>
@@ -24,7 +24,6 @@
             <select id="typeSelect" name="type" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
                 <option value="">-- Pilih Tipe --</option>
                 <option value="membership">Membership</option>
-                <option value="visit">Visit</option>
             </select>
         </div>
         <div id="membershipSection" style="display:none;">
@@ -55,6 +54,28 @@
                 <label for="emergency_contact" class="block text-sm font-medium text-gray-700">No Darurat</label>
                 <input type="text" id="emergency_contact" name="emergency_contact" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
+
+            <!-- Gender -->
+             <div class="mt-4">
+                <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                <select name="gender" id="gender" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option value="">-- Pilih Gender --</option>
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+             </div>
+
+            <!-- Golongan Darah -->
+             <div class="mt-4">
+                <label for="golongan_darah" class="block text-sm font-medium text-gray-700">Golongan Darah</label>
+                <input type="text" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" name="golongan_darah" id="golongan_darah" placeholder="Contoh: A, B, AB, O">
+            </div>
+
+            <!-- Identitas (KTP/SIM) -->
+             <div class="mt-4">
+                <label for="identitas" class="block text-sm font-medium text-gray-700 mb-2">No Identitas (KTP/SIM)</label>
+                <input type="file" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" name="identitas" id="identitas" placeholder="Masukkan No KTP atau SIM" >
+            </div>
         </div>
             <div class="mt-4">
                 <!-- <label class="block text-sm font-medium text-gray-700">Voucher Kode</label> -->
@@ -66,7 +87,7 @@
             </div>            
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Total</label>
-            <input type="number" id="totalInput" name="total" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+            <input type="number" id="totalInput" name="total" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" required readonly>
         </div>
         <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Simpan Transaksi</button>
     </form>

@@ -48,7 +48,7 @@
                         <a href="{{ route('memberships.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Membership</a>
                     </li>
                     <li class="mb-2">
-                        <a href="" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Shift</a>
+                        <a href="{{ route('shift.report') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">Shift</a>
                     </li>
                     <li class="mb-2">
                         <a href="{{ route('user-memberships.index') }}" class="block py-2 px-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">User Membership</a>

@@ -26,6 +26,8 @@ class User extends Authenticatable
         'password',
         'no_hp',
         'no_emergency',
+        'gender',
+        'golongan_darah',
         'role',
     ];
 

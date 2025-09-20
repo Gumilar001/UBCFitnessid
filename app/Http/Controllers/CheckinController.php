@@ -56,11 +56,7 @@ class CheckinController extends Controller
         'checkin_time' => now(),
     ]);
 
-    return response()->json([
-        'success' => true,
-        'message' => "Berhasil check-in: " . $userMembership->user->name,
-        'data' => $checkin
-    ]);
+    return redirect()->route('checkins.index')->with('success', "Check-in berhasil untuk {$userMembership->name}");
 }
 
 }

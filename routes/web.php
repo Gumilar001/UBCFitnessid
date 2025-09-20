@@ -17,10 +17,12 @@ use App\Http\Controllers\POSController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\RfidController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Route::get('/dashboard',[DashboardController::class, 'index'] )
     ->middleware(['auth', 'verified'])
@@ -61,6 +63,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Kelola Discounts
     Route::resource('discounts', App\Http\Controllers\DiscountController::class);
+    
 
     // Kelola Vouchers
     Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
@@ -92,6 +95,14 @@ Route::middleware(['auth', 'role:admin,staff'])->group(function () {
     // Checkins
     Route::get('/checkins', [CheckinController::class, 'index'])->name('checkins.index');
     Route::post('/checkins', [CheckinController::class, 'store'])->name('checkins.store');
+    
+    
+
+    //SHift Report
+    Route::get('/shift/report', [ShiftController::class, 'reportShift'])->name('shift.report');
+
+    //checkin repo
+    
 
 });
 

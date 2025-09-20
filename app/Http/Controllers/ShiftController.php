@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Shift;
+use App\Models\Transaction;
 // use App\Models\Product;
 
 class ShiftController extends Controller
@@ -18,6 +19,32 @@ class ShiftController extends Controller
             ->first();
 
         return view('shift.index', compact('currentShift'));
+    }
+
+    public function reportShift(Request $request)
+    {
+        $query = Transaction::with('shift');
+
+// Pencarian berdasarkan nama atau email
+if ($request->filled('search')) {
+    $query->where(function ($q) use ($request) {
+        $q->where('nama', 'like', '%' . $request->search . '%')
+          ->orWhere('email', 'like', '%' . $request->search . '%');
+    });
+}
+
+// Filter berdasarkan jenis pembayaran
+if ($request->filled('shift') && $request->shift !== 'all') {
+    $query->where('shift', $request->shift);
+}
+
+// Panggil latest sebelum get() untuk memastikan urutan berdasarkan created_at atau kolom lainnya
+$transactions = $query->latest()->paginate(10)->withQueryString();
+
+$shifts = ['Pagi', 'Sore'];
+
+return view('shift.report', compact('transactions', 'shifts'));
+
     }
 
     public function open(Request $request)

@@ -37,6 +37,9 @@ class POSController extends Controller
             'email' => 'nullable|email',
             'phone' => 'nullable|string|max:20',
             'emergency_contact' => 'nullable|string|max:20',
+            'gender' => 'nullable|string|max:10',
+            'golongan_darah' => 'nullable|string|max:5',
+            'identitas' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'voucher' => 'nullable|string',
         ]);
 
@@ -47,6 +50,13 @@ class POSController extends Controller
             return redirect()->route('shift.index')->with('error', 'Silakan buka shift dulu.');
         }
 
+        
+        // Upload Identitas
+        $identitasPath = null;
+        if ($request->hasFile('identitas')) {
+            $identitasPath = $request->file('identitas')->store('identitas-membership', 'public');
+        }
+
         // Membership logic
         $membershipId = $request->membership_id;
         if (!$membershipId) {
@@ -54,7 +64,7 @@ class POSController extends Controller
             if ($visitMembership) {
                 $membershipId = $visitMembership->id;
             }
-        }
+        } 
 
         if ($request->type === 'membership') {
             $user = User::where('email', $request->email)->first();
@@ -65,6 +75,8 @@ class POSController extends Controller
                     'password' => Hash::make('12345678'),
                     'no_hp' => $request->phone,
                     'no_emergency' => $request->emergency_contact,
+                    'gender' => $request->gender,
+                    'golongan_darah' => $request->golongan_darah,
                     'role' => 'user',
                 ]);
             }
@@ -115,6 +127,7 @@ class POSController extends Controller
             }
         }
 
+
         $transaction = Transaction::create([
             'trans_id' => $request->trans_id,
             'nama' => $request->nama,
@@ -122,6 +135,9 @@ class POSController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'emergency_contact' => $request->emergency_contact,
+            'gender' => $request->gender,
+            'golongan_darah' => $request->golongan_darah,
+            'identitas' => $identitasPath,
             'amount' => $total,
             'jenis_pembayaran' => null,
             'status' => 'pending',

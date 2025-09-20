@@ -8,6 +8,7 @@ use App\Models\Membership;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Spatie\Browsershot\Browsershot;
+use App\Models\Transaction;
 
 class UserMembershipController extends Controller
 {
@@ -21,11 +22,13 @@ class UserMembershipController extends Controller
     {
         $users = User::where('role', 'user')
         ->whereDoesntHave('userMemberships')
-        ->get();
+        ->get(); 
+
+        $transactions = Transaction::all();
                  
         $memberships = Membership::whereHas('transactions')->get();
 
-        return view('user_memberships.create', compact('users', 'memberships'));
+        return view('user_memberships.create', compact('users', 'transactions', 'memberships'));
     }
 
     public function store(Request $request)
@@ -33,6 +36,7 @@ class UserMembershipController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'membership_id' => 'required|exists:memberships,id',
+            'rfid_code' => 'required|string|unique:user_memberships,rfid_code',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'required|in:active,expired,cancelled',
