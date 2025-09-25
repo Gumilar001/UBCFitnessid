@@ -68,7 +68,7 @@
             <!-- Golongan Darah -->
              <div class="mt-4">
                 <label for="golongan_darah" class="block text-sm font-medium text-gray-700">Golongan Darah</label>
-                <input type="text" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" name="golongan_darah" id="golongan_darah" placeholder="Contoh: A, B, AB, O">
+                <input type="text" class="block w-full rounded-md border-gray-300 shadow-sm uppercase focus:border-blue-500 focus:ring-blue-500" name="golongan_darah" id="golongan_darah" placeholder="Contoh: A, B, AB, O">
             </div>
 
             <!-- Identitas (KTP/SIM) -->
@@ -78,7 +78,6 @@
             </div>
         </div>
             <div class="mt-4">
-                <!-- <label class="block text-sm font-medium text-gray-700">Voucher Kode</label> -->
                 <input type="hidden" id="voucher" name="voucher" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
             <div>
@@ -92,84 +91,106 @@
         <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow hover:bg-blue-700 transition">Simpan Transaksi</button>
     </form>
     <script>
-    let membershipPrice = 0;
-    let membershipDiscount = 0;
-    let membershipDiscountType = null;
+        let membershipPrice = 0;
+        let membershipDiscount = 0;
+        let membershipDiscountType = null;
+        const registrationFee = 50000;  // Biaya registrasi khusus IRON
 
-    document.getElementById('typeSelect').addEventListener('change', function() {
-        var type = this.value;
-        document.getElementById('membershipSection').style.display = (type === 'membership') ? 'block' : 'none';
-    });
+        document.getElementById('typeSelect').addEventListener('change', function() {
+            var type = this.value;
+            document.getElementById('membershipSection').style.display = (type === 'membership') ? 'block' : 'none';
+        });
 
-    document.getElementById('membershipSelect').addEventListener('change', function() {
-        var membershipId = this.value;
-        if(membershipId) {
-            fetch('/pos/membership-detail?membership_id=' + membershipId)
-                .then(res => res.json())
-                .then(data => {
-                    if(data.error) {
-                        document.getElementById('membershipDetail').innerHTML = '<span style="color:red">'+data.error+'</span>';
-                        document.getElementById('totalInput').value = '';
-                    } else {
-                        membershipPrice = data.price;
-                        membershipDiscount = data.discount ? data.discount.value : 0;
-                        membershipDiscountType = data.discount ? data.discount.type : null;
-                        let diskonText = '-';
-                        let finalPrice = membershipPrice;
-                        if(data.discount) {
-                            if(data.discount.type === 'percent') {
-                                diskonText = data.discount.value + '%';
-                                finalPrice = membershipPrice - (membershipPrice * data.discount.value / 100);
-                            } else {
-                                diskonText = 'Rp ' + Number(data.discount.value).toLocaleString();
-                                finalPrice = membershipPrice - data.discount.value;
-                            }
-                            finalPrice = Math.max(finalPrice, 0);
-                        }
-                        document.getElementById('membershipDetail').innerHTML =
-                            'Harga: Rp ' + Number(membershipPrice).toLocaleString() + '<br>' +
-                            'Diskon: ' + diskonText + '<br>' +
-                            'Harga Akhir: Rp ' + Number(finalPrice).toLocaleString() + '<br>' +
-                            'Durasi: ' + data.duration + ' hari';
-                        document.getElementById('totalInput').value = finalPrice;
-                    }
-                });
-        } else {
-            document.getElementById('membershipDetail').innerHTML = '';
-            document.getElementById('totalInput').value = '';
-            membershipPrice = 0;
-            membershipDiscount = 0;
-            membershipDiscountType = null;
-        }
-    });
-
-    // Voucher AJAX
-    document.getElementById('voucher').addEventListener('blur', function() {
-        let voucherCode = this.value;
-        let total = parseFloat(document.getElementById('totalInput').value) || 0;
-        if(voucherCode && total > 0) {
-            fetch('/pos/voucher-detail?voucher=' + voucherCode)
-                .then(res => res.json())
-                .then(data => {
-                    let finalTotal = total;
-                    let voucherText = '-';
-                    if(data.voucher) {
-                        if(data.voucher.type === 'percent') {
-                            voucherText = data.voucher.value + '%';
-                            finalTotal = finalTotal - (finalTotal * data.voucher.value / 100);
+        document.getElementById('membershipSelect').addEventListener('change', function() {
+            var membershipId = this.value;
+            if(membershipId) {
+                fetch('/pos/membership-detail?membership_id=' + membershipId)
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.error) {
+                            document.getElementById('membershipDetail').innerHTML = '<span style="color:red">'+data.error+'</span>';
+                            document.getElementById('totalInput').value = '';
                         } else {
-                            voucherText = 'Rp ' + Number(data.voucher.value).toLocaleString();
-                            finalTotal = finalTotal - data.voucher.value;
+                            membershipPrice = data.price;
+                            membershipDiscount = data.discount ? data.discount.value : 0;
+                            membershipDiscountType = data.discount ? data.discount.type : null;
+
+                            // Hitung harga setelah diskon
+                            let finalPrice = membershipPrice;
+                            let diskonText = '-';
+                            if(data.discount) {
+                                if(data.discount.type === 'percent') {
+                                    diskonText = data.discount.value + '%';
+                                    finalPrice -= (membershipPrice * data.discount.value / 100);
+                                } else {
+                                    diskonText = 'Rp ' + Number(data.discount.value).toLocaleString();
+                                    finalPrice -= data.discount.value;
+                                }
+                                finalPrice = Math.max(finalPrice, 0);
+                            }
+
+                            // Hanya membership IRON yang ada biaya registrasi
+                            let appliedRegistrationFee = 0;
+                            if (data.name && 
+                               (data.name.toLowerCase() === 'iron' || data.name.toLowerCase() === 'iron(pelajar)')) {
+                                appliedRegistrationFee = registrationFee;
+                                finalPrice += appliedRegistrationFee;
+                            }
+
+                            // Bangun detail
+                            let detailHtml =
+                                'Harga: Rp ' + Number(membershipPrice).toLocaleString() + '<br>' +
+                                'Diskon: ' + diskonText + '<br>';
+
+                            if (appliedRegistrationFee > 0) {
+                                detailHtml += 'Biaya Registrasi: Rp ' + Number(appliedRegistrationFee).toLocaleString() + '<br>';
+                            }
+
+                            detailHtml +=
+                                'Harga Akhir: Rp ' + Number(finalPrice).toLocaleString() + '<br>' +
+                                'Durasi: ' + data.duration + ' hari';
+
+                            document.getElementById('membershipDetail').innerHTML = detailHtml;
+                            document.getElementById('totalInput').value = finalPrice;
                         }
-                        finalTotal = Math.max(finalTotal, 0);
-                        document.getElementById('membershipDetail').innerHTML += '<br>Voucher: ' + voucherText + '<br>Total Setelah Voucher: Rp ' + Number(finalTotal).toLocaleString();
-                        document.getElementById('totalInput').value = finalTotal;
-                    } else if(data.error) {
-                        document.getElementById('membershipDetail').innerHTML += '<br><span style="color:red">'+data.error+'</span>';
-                    }
-                });
-        }
-    });
-    </script>
+                    });
+            } else {
+                document.getElementById('membershipDetail').innerHTML = '';
+                document.getElementById('totalInput').value = '';
+                membershipPrice = 0;
+                membershipDiscount = 0;
+                membershipDiscountType = null;
+            }
+        });
+
+        // Voucher AJAX (tetap sama)
+        document.getElementById('voucher').addEventListener('blur', function() {
+            let voucherCode = this.value;
+            let total = parseFloat(document.getElementById('totalInput').value) || 0;
+            if(voucherCode && total > 0) {
+                fetch('/pos/voucher-detail?voucher=' + voucherCode)
+                    .then(res => res.json())
+                    .then(data => {
+                        let finalTotal = total;
+                        let voucherText = '-';
+                        if(data.voucher) {
+                            if(data.voucher.type === 'percent') {
+                                voucherText = data.voucher.value + '%';
+                                finalTotal = finalTotal - (finalTotal * data.voucher.value / 100);
+                            } else {
+                                voucherText = 'Rp ' + Number(data.voucher.value).toLocaleString();
+                                finalTotal = finalTotal - data.voucher.value;
+                            }
+                            finalTotal = Math.max(finalTotal, 0);
+                            document.getElementById('membershipDetail').innerHTML += '<br>Voucher: ' + voucherText + '<br>Total Setelah Voucher: Rp ' + Number(finalTotal).toLocaleString();
+                            document.getElementById('totalInput').value = finalTotal;
+                        } else if(data.error) {
+                            document.getElementById('membershipDetail').innerHTML += '<br><span style="color:red">'+data.error+'</span>';
+                        }
+                    });
+            }
+        });
+        </script>
+
     </div>
 </x-app-layout>

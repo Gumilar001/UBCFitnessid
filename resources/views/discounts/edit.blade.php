@@ -23,6 +23,13 @@
                 @enderror
             </div>
             <div class="mb-4">
+                <label for="type" class="block text-gray-700 font-bold mb-2">Discount Type</label>
+                <select name="type" id="type" class="w-full border rounded px-3 py-2" required>
+                    <option value="percent" {{ old('type', $discount->type) == 'percent' ? 'selected' : '' }}>Percent</option>
+                    <option value="nominal" {{ old('type', $discount->type) == 'nominal' ? 'selected' : '' }}>Nominal</option>
+                </select>
+            </div>
+            <div class="mb-4">
                 <label for="value" class="block text-gray-700 font-bold mb-2">Percentage (%)</label>
                 <input type="number" name="value" id="value" value="{{ old('value', $discount->value) }}" class="w-full border rounded px-3 py-2" min="0" max="100" required>
                 @error('value')

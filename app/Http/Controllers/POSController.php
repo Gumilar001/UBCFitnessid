@@ -39,7 +39,7 @@ class POSController extends Controller
             'emergency_contact' => 'nullable|string|max:20',
             'gender' => 'nullable|string|max:10',
             'golongan_darah' => 'nullable|string|max:5',
-            'identitas' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'identitas' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:4096',
             'voucher' => 'nullable|string',
         ]);
 
@@ -51,12 +51,16 @@ class POSController extends Controller
         }
 
         
-        // Upload Identitas
         $identitasPath = null;
+
         if ($request->hasFile('identitas')) {
-            $identitasPath = $request->file('identitas')->store('identitas-membership', 'public');
+            $file = $request->file('identitas');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $path = $file->storeAs('identitas-membership', $filename, 'public');
+            $identitasPath = $path;
         }
 
+        
         // Membership logic
         $membershipId = $request->membership_id;
         if (!$membershipId) {
@@ -138,7 +142,7 @@ class POSController extends Controller
             'gender' => $request->gender,
             'golongan_darah' => $request->golongan_darah,
             'identitas' => $identitasPath,
-            'amount' => $total,
+            'amount' => $request->total,
             'jenis_pembayaran' => null,
             'status' => 'pending',
             'paid_at' => now(),
